@@ -3,7 +3,8 @@ var Module = require('module');
 
 Function.prototype.ensure = ( arr, func ) => func();
 
-module.exports = function(webpackResolve) {
+module.exports = function(webpack) {
+  var webpackResolve = webpack.resolve || {}
   /**
    * Ship native require to support webpack like require paths when
    * running tests in mocha. We do this by ignoring filetypes node
@@ -26,7 +27,7 @@ module.exports = function(webpackResolve) {
     }
 
     // Shim out aliased modules
-    var alias = webpackResolve.alias
+    var alias = webpackResolve.alias || {}
     Object.keys(alias).forEach(function(key) {
       if (path.search(new RegExp('^' + key)) !== -1) {
         path = resolve(alias[key]) + path.slice(key.length)
