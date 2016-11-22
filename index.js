@@ -28,8 +28,14 @@ module.exports = function(webpack) {
 
     // Shim out aliased modules
     var alias = webpackResolve.alias || {}
+    var module = path;
+    var slashIndex = path.search('/');
+    var hasSlash = slashIndex !== -1
+    if (hasSlash) {
+      module = path.slice(0, slashIndex)
+    }
     Object.keys(alias).forEach(function(key) {
-      if (path.search(new RegExp('^' + key)) !== -1) {
+      if (module.search(new RegExp('^' + key + '$')) !== -1) {
         path = resolve(alias[key]) + path.slice(key.length)
       }
     });
