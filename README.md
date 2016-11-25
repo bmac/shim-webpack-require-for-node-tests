@@ -48,14 +48,14 @@ You can also set this up as your test script in your package.json
   "scripts": {
     "test": "NODE_ENV=test mocha --colors --compilers js:babel-core/register --require shim-webpack-require.js \"tests/**/*test.js\"",
     "test:watch": "npm run test -- --watch",
-    // ...
+    ...
   },
   "devDependencies": {
     "jsdom": "^9.2.1",
     "mocha": "^2.4.5",
     "shim-webpack-require-for-node-tests": "^1.0.0",
     "webpack": "^1.12.9",
-    // ...
+    ...
   },
 }
 ```
