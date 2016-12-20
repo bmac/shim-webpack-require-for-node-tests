@@ -1,10 +1,25 @@
 var resolve = require('path').resolve;
 var Module = require('module');
 
-Function.prototype.ensure = ( arr, func ) => func();
+Function.prototype.ensure = function( arr, func ) {
+  return func();
+}
+
+var resolveAliased = function(alias, path) {
+  alias = alias || {}
+  var newPath = path
+  Object.keys(alias).forEach(function(key) {
+    if (path.search(new RegExp('^' + key)) !== -1) {
+      newPath = resolve(alias[key]) + path.slice(key.length)
+    }
+  });
+  return newPath
+}
 
 module.exports = function(webpack) {
   var webpackResolve = webpack.resolve || {}
+  var alias = webpackResolve.alias || {}
+
   /**
    * Ship native require to support webpack like require paths when
    * running tests in mocha. We do this by ignoring filetypes node
@@ -21,25 +36,11 @@ module.exports = function(webpack) {
       path = path.slice(12)
       var context = this
       return function(cb) {
-        var bundled = Module._load(path, context)
+        var bundled = Module._load(resolveAliased(alias, path), context)
         cb(bundled)
       };
     }
 
-    // Shim out aliased modules
-    var alias = webpackResolve.alias || {}
-    var module = path;
-    var slashIndex = path.search('/');
-    var hasSlash = slashIndex !== -1
-    if (hasSlash) {
-      module = path.slice(0, slashIndex)
-    }
-    Object.keys(alias).forEach(function(key) {
-      if (module.search(new RegExp('^' + key + '$')) !== -1) {
-        path = resolve(alias[key]) + path.slice(key.length)
-      }
-    });
-
-    return Module._load(path, this);
+    return Module._load(resolveAliased(alias, path), this);
   };
 }
