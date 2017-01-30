@@ -41,6 +41,10 @@ module.exports = function(webpack) {
       };
     }
 
+    if (path.search(/^script!/) !== -1) {
+      return ''
+    }
+
     return Module._load(resolveAliased(alias, path), this);
   };
 }
